@@ -5,6 +5,13 @@ import { v4 } from "uuid";
 interface IUpdateFilePart {
     id: string
     fileId: string
+    partNumber: number
+    size: number
+    etag?: string
+}
+
+interface IUpdateFileBlob {
+    id: string
     blob: Blob
 }
 
@@ -13,13 +20,16 @@ interface IUpdateFile {
     taskId: string
     name: string
     size: number
+    uploadId?: string
+    status: 'pending' | 'uploading' | 'completed'
 }
 
 interface IUpdateTask {
     id: string
     name: string
-    newName: string
-    description: string
+    newName?: string
+    description?: string
+    icon?: Blob
     createdAt: Date
 }
 
@@ -27,7 +37,16 @@ export interface UpdateTask {
     name: string
     newName?: string
     description?: string
+    icon?: File
     files: File[]
+}
+
+export interface UpdatingTask {
+    task: IUpdateTask
+    completed: number
+    total: number
+    status: 'pending' | 'uploading' | 'completed'
+    paddingParts: IUpdateFilePart[]
 }
 
 class UpdateTaskManager {
@@ -36,59 +55,97 @@ class UpdateTaskManager {
         updateTasks: EntityTable<IUpdateTask, 'id'>;
         updateFiles: EntityTable<IUpdateFile, 'id'>;
         updateFileParts: EntityTable<IUpdateFilePart, 'id'>;
+        updateFileBlobs: EntityTable<IUpdateFileBlob, 'id'>;
     }
 
-    readonly tasks: IUpdateTask[] = [];
+    readonly tasks: UpdatingTask[] = [];
 
     constructor() {
         this.db.version(1).stores({
-            updateTasks: '++id, name, newName, description, createdAt',
+            updateTasks: '++id, name, newName, description, icon createdAt',
             updateFiles: '++id, taskId, name, size',
-            updateFileParts: '++id, fileId'
+            updateFileParts: '++id, fileId, partNumber, size, etag',
+            IUpdateFileBlobs: '++id, blob'
         });
     }
 
     async addUpdateTask(task: UpdateTask): Promise<IUpdateTask> {
+
         const newTask: IUpdateTask = {
             id: v4(),
             name: task.name,
-            newName: task.newName || '',
-            description: task.description || '',
+            newName: task.newName,
+            description: task.description,
+            icon: task.icon ? await task.icon.arrayBuffer().then(buf => new Blob([buf], { type: task.icon!.type })) : undefined,
             createdAt: new Date()
         };
 
-        if (!task.files || task.files.length === 0) {
-            throw new Error("No files provided for the update task.");
+        const updatingTask: UpdatingTask = {
+            task: newTask,
+            completed: 0,
+            total: 0,
+            status: 'pending',
+            paddingParts: []
         }
 
-        for (const file of task.files) { 
+        for (const file of task.files) {
             const newFile: IUpdateFile = {
                 id: v4(),
                 taskId: newTask.id,
                 name: file.name,
-                size: file.size
+                size: file.size,
+                status: 'pending'
             };
-            const buffer = await file.arrayBuffer();
+
             let offset = 0;
-            while (buffer.byteLength > offset) {
-                const part = buffer.slice(offset, offset + this.partSize);
-                const newPart: IUpdateFilePart = {
+            let partNumber = 0;
+            while (offset < file.size) {
+                const partBlob = file.slice(offset, Math.min(offset + this.partSize, file.size));
+                const part: IUpdateFilePart = {
                     id: v4(),
                     fileId: newFile.id,
-                    blob: new Blob([part], { type: file.type })
+                    size: partBlob.size,
+                    partNumber: ++partNumber, // start part numbers from 1
                 };
-                await this.db.updateFileParts.add(newPart);
-                offset += this.partSize;
+                const blob: IUpdateFileBlob = {
+                    id: part.id,
+                    blob: partBlob
+                };
+
+                await this.db.updateFileParts.add(part);
+                await this.db.updateFileBlobs.add(blob);
+                updatingTask.paddingParts.push(part);
+                updatingTask.total += partBlob.size;
+                offset += part.size;
             }
+
             await this.db.updateFiles.add(newFile);
         }
 
         await this.db.updateTasks.add(newTask);
-        this.tasks.push(newTask);
+
+        this.tasks.push(updatingTask);
+
         return newTask;
     }
 
-    
+    private _running = false;
+    get running() {
+        return this._running;
+    }
+
+    async start() {
+        if (this._running) {
+            return;
+        }
+        this._running = true;
+        while (this.tasks.length > 0) {
+            const updateTask = this.tasks[0];
+            const files = await this.db.updateFiles.where('taskId').equals(updateTask.task.id).toArray();
+
+        }
+        this._running = false; // Reset running state after processing
+    }
 }
 
 export const updateTaskManager = new UpdateTaskManager();
