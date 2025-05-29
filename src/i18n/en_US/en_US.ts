@@ -16,8 +16,8 @@ export const en_US: ResourceLanguage = {
         sign_in_success: 'Welcome back, {{username}}!',
         sign_out_success: 'You have successfully signed out.',
         show_userId: '@{{name}}',
-        sign_in_now: 'Have an account? Register',
-        sign_up_now: 'Have an account? Sign Up',
+        sign_up_now: 'Have an account? Register',
+        sign_in_now: 'Have an account? Sign Up',
         sign_up_success: 'Registration successful! Welcome, {{username}}!',
         confirm_password: "Confirm Password",
     },
@@ -32,6 +32,7 @@ export const en_US: ResourceLanguage = {
         user_not_found: 'User not found',
         username_reserved: 'Username Reserved',
         username_already_exists: 'Username already exists',
+        method_already_exists: 'Method already exists',
         error_occurred: "An error occurred: {{error}}",
     },
     navigation: {

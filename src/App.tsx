@@ -39,15 +39,20 @@ export default function App() {
   return (
     <ConfigProvider
       theme={{
+        token: {
+          colorPrimary: '#ddbc1b', // primary color
+          colorText: '#000000', // text color
+          colorBgContainer: '#FFFFFF', // background color for containers
+          colorBgElevated: '#FFFFFF', // elevated background color
+          colorBgLayout: '#FFFFFF', // layout background color
+          borderRadius: 20, // border radius
+        },
         components: {
           Layout: {
             headerBg: '#FFFFFF',
-            headerColor: '#000000',
-            siderBg: '#FFFFFF',
-            bodyBg: '#FFFFFF',
           },
           Avatar: {
-            colorTextPlaceholder: '#e3c55f', // avatar bg color
+            colorTextPlaceholder: '#d3b628', // avatar bg color
           },
         },
         cssVar: true,

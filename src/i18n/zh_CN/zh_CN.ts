@@ -32,12 +32,13 @@ export const zh_CN: ResourceLanguage = {
         user_not_found: '未找到用户',
         username_reserved: '无法使用的用户名',
         username_already_exists: '用户名已存在',
+        method_already_exists: '算法已存在',
         error_occurred: "发生错误：{{error}}",
     },
     navigation: {
         home: "首页",
         tasks: "任务",
-        methods: "方法",
+        methods: "算法",
         settings: "设置",
     },
     methods: {
