@@ -16,6 +16,10 @@ export const zh_CN: ResourceLanguage = {
         sign_in_success: '欢迎回来，{{username}}！',
         sign_out_success: '您已成功登出。',
         show_userId: '@{{name}}',
+        sign_up_now: '还没有账号？立即注册',
+        sign_in_now: '已有账号？立即登录',
+        sign_up_success: '注册成功！欢迎，{{username}}！',
+        confirm_password: "确认密码",
     },
     error_report: {
         error_400: '错误请求',
@@ -25,6 +29,9 @@ export const zh_CN: ResourceLanguage = {
         error_500: '服务器内部错误',
         unknown_error: '未知错误',
         password_error: '用户名或密码错误',
+        user_not_found: '未找到用户',
+        username_reserved: '无法使用的用户名',
+        username_already_exists: '用户名已存在',
         error_occurred: "发生错误：{{error}}",
     },
     navigation: {
@@ -32,5 +39,14 @@ export const zh_CN: ResourceLanguage = {
         tasks: "任务",
         methods: "方法",
         settings: "设置",
+    },
+    methods: {
+        title: "算法",
+    },
+    tasks: {
+        title: "任务",
+    },
+    settings: {
+        title: "设置",
     }
 }

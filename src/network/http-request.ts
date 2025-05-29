@@ -52,14 +52,32 @@ export async function httpRequest<Res>(req: IReq<Res> | Promise<IReq<Res>>): Pro
         return await req.onResponse(resp);
     }
 
-    if (!resp.ok) {
-        throw new Error(`error_${resp.status}`);
-    }
-    if (resp.status === 401) {
+
+
+    if (resp.status === 401 && !req.public) {
         useAccount.getState().signOut();
         useSignIn.getState().open();
         throw new Error('error_401');
     }
+
+    if (!resp.ok) {
+        let jsonError: {
+            error?: string;
+            message?: string;
+            statusCode?: number;
+        };
+        try {
+            jsonError = await resp.json();
+        } catch (e) {
+            console.error('Failed to parse error response:', e);
+            throw new Error(`error_${resp.status}`);
+        }
+        if (jsonError.message) {
+            throw new Error(jsonError.message);
+        }
+        throw new Error(`error_${resp.status}`);
+    }
+
     if (req.responseType === 'blob') {
         return (await resp.blob()) as unknown as Res;
     }

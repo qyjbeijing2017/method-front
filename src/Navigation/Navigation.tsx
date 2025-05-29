@@ -45,7 +45,7 @@ export function Navigation({ collapsed }: { collapsed?: boolean }) {
             collapsible
             collapsed={collapsed}
             collapsedWidth={50}
-            style={{height: 'calc(100vh - 64px)', position: 'fixed', left: 0, top: 64, zIndex: 1}}
+            style={{height: 'calc(100vh - 64px)', left: 0, zIndex: 1}}
         >
             <Menu
                 style={{ height: '100%', borderRight: 0 }}

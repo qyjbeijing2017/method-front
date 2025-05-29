@@ -16,6 +16,10 @@ export const en_US: ResourceLanguage = {
         sign_in_success: 'Welcome back, {{username}}!',
         sign_out_success: 'You have successfully signed out.',
         show_userId: '@{{name}}',
+        sign_in_now: 'Have an account? Register',
+        sign_up_now: 'Have an account? Sign Up',
+        sign_up_success: 'Registration successful! Welcome, {{username}}!',
+        confirm_password: "Confirm Password",
     },
     error_report: {
         error_400: 'Bad Request',
@@ -25,6 +29,9 @@ export const en_US: ResourceLanguage = {
         error_500: 'Internal Server Error',
         unknown_error: 'Unknown Error',
         password_error: 'Incorrect username or password',
+        user_not_found: 'User not found',
+        username_reserved: 'Username Reserved',
+        username_already_exists: 'Username already exists',
         error_occurred: "An error occurred: {{error}}",
     },
     navigation: {
@@ -33,5 +40,14 @@ export const en_US: ResourceLanguage = {
         tasks: "Tasks",
         methods: "Methods",
         settings: "Settings",
+    },
+    methods: {
+        title: "Methods",
+    },
+    tasks: {
+        title: "Tasks",
+    },
+    settings: {
+        title: "Settings",
     }
 }

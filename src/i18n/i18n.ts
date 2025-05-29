@@ -14,7 +14,10 @@ i18n.use(initReactI18next).init({
     'translation', // 默认命名空间
     'error_report', 
     'navigation', 
-    'sign_in'
+    'sign_in',
+    'methods',
+    'tasks',
+    'settings',
   ], // 命名空间
   defaultNS: 'translation', // 默认命名空间
   interpolation: {
