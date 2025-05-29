@@ -10,7 +10,13 @@ i18n.use(initReactI18next).init({
   },
   lng: 'en_US', // 默认语言
   fallbackLng: 'en_US',
-  ns: ['test'], // 命名空间
+  ns: [
+    'translation', // 默认命名空间
+    'error_report', 
+    'navigation', 
+    'sign_in'
+  ], // 命名空间
+  defaultNS: 'translation', // 默认命名空间
   interpolation: {
     escapeValue: false, // react 已经安全处理 XSS
   },
