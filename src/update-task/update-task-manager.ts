@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from "dexie";
 import { methodDB } from "../store/db";
 import { v4 } from "uuid";
+import { create } from "zustand";
 
 interface IUpdateFilePart {
     id: string
@@ -49,6 +50,12 @@ export interface UpdatingTask {
     paddingParts: IUpdateFilePart[]
 }
 
+export interface TasksState {
+    tasks: UpdatingTask[]
+    addTask: (task: UpdatingTask) => void
+    removeTask: (taskId: string) => void
+}
+
 class UpdateTaskManager {
     readonly partSize = parseInt(import.meta.env.VITE_FILE_PART_SIZE, 10) || 5 * 1024 * 1024; // Default to 5MB if not set
     readonly db = methodDB as Dexie & {
@@ -59,6 +66,23 @@ class UpdateTaskManager {
     }
 
     readonly tasks: UpdatingTask[] = [];
+
+    readonly useTasks = create<TasksState>(set=>({
+        get tasks() {
+            return this.tasks;
+        },
+        addTask(task: UpdatingTask) {
+            this.tasks.push(task);
+            set({ tasks: this.tasks });
+        },
+        removeTask(taskId: string) {
+            const index = this.tasks.findIndex(t => t.task.id === taskId);
+            if (index !== -1) {
+                this.tasks.splice(index, 1);
+                set({ tasks: this.tasks });
+            }
+        }
+    })); 
 
     constructor() {
         this.db.version(1).stores({
