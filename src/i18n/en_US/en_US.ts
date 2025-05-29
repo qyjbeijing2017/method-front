@@ -25,6 +25,7 @@ export const en_US: ResourceLanguage = {
         error_500: 'Internal Server Error',
         unknown_error: 'Unknown Error',
         password_error: 'Incorrect username or password',
+        error_occurred: "An error occurred: {{error}}",
     },
     navigation: {
         // Add navigation specific translations here

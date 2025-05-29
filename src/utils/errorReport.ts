@@ -7,12 +7,12 @@ export async function errorReport(fun: () => Promise<void> | void): Promise<void
     } catch (error) {
         console.error(error);
         if (error instanceof Error) {
-            message.error(t(error.message, { ns: 'http_request' }));
+            message.error(t(error.message, { ns: 'error_report' }));
         }
         else if (typeof error === 'string') {
-            message.error(t(error, { ns: 'http_request' }));
+            message.error(t(error, { ns: 'error_report' }));
         } else {
-            message.error(t('error_occurred', { error: JSON.stringify(error), ns: 'http_request' }));
+            message.error(t('error_occurred', { error: JSON.stringify(error), ns: 'error_report' }));
         }
     }
 }

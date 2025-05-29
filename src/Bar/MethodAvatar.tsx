@@ -8,8 +8,8 @@ import { useMemo } from "react";
 
 export default function MethodAvatar() {
     const { username } = useAccount();
-    const { open } = useSignIn();
     const { t } = useTranslation('sign_in');
+    console.log('MethodAvatar rendered', username);
 
     const items: MenuProps['items'] = useMemo(() => (username ? [
         {
@@ -50,7 +50,7 @@ export default function MethodAvatar() {
                 alt={username}
                 onClick={() => {
                     if (!username) {
-                        open();
+                        useSignIn.getState().open();
                     }
                 }}
             >

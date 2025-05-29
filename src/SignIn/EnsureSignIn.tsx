@@ -11,6 +11,11 @@ export function EnsureSignIn({ children }: { children?: React.ReactNode }) {
             return;
         }
         const payload = jwtDecode(token);
+        if(payload.exp && payload.exp * 1000 < Date.now()) {
+            useAccount.getState().signOut();
+            useSignIn.getState().open();
+            return;
+        }
     }, [token]);
     return children
 }
