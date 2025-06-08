@@ -44,6 +44,7 @@ export const en_US: ResourceLanguage = {
     },
     methods: {
         title: "Methods",
+        new: "New Method",
     },
     tasks: {
         title: "Tasks",

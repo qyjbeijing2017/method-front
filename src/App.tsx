@@ -8,6 +8,9 @@ import { Home } from './Pages/Home.tsx';
 import { Tasks } from './Pages/Tasks.tsx';
 import { Methods } from './Pages/Methods.tsx';
 import { Settings } from './Pages/Settings.tsx';
+import { MethodAll } from './Method/All.tsx';
+import { MethodDetails } from './Method/Details.tsx';
+import { MethodNew } from './Method/New.tsx';
 
 
 const router = createBrowserRouter([
@@ -15,7 +18,7 @@ const router = createBrowserRouter([
     element: <MethodLayout />,
     children: [
       {
-        path: '/',
+        index: true, // This will render when the path is exactly '/'
         element: <Home />,
       },
       {
@@ -25,6 +28,21 @@ const router = createBrowserRouter([
       {
         path: '/methods',
         element: <Methods />,
+        children: [
+          {
+            index: true, // This will render when the path is exactly '/methods'
+            element: <MethodAll />,
+          },
+          {
+            path: '/methods/new',
+            element: <MethodNew />,
+          },
+          {
+            path: '/methods/:methodId',
+            element: <MethodDetails />,
+          },
+
+        ]
       },
       {
         path: '/settings',

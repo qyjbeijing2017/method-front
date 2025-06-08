@@ -4,6 +4,7 @@ import { errorReport } from '../utils/errorReport';
 import { httpRequest } from '../network/http-request';
 import { signUpService } from '../network/sign-up.service';
 import { useAccount } from '../store/account';
+import { useSignIn } from '../store/sign-in';
 
 type FieldType = {
     username: string;
@@ -31,7 +32,7 @@ export function SignUp({
             errorReport(async () => {
                 const { access_token } = await httpRequest(signUpService(value));
                 useAccount.getState().signIn(value.username, access_token);
-                close();
+                useSignIn.getState().close();
                 message.success(t('sign_up_success', { username: value.username }));
             })
             setConfirmLoading(false);

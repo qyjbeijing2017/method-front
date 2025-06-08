@@ -43,6 +43,7 @@ export const zh_CN: ResourceLanguage = {
     },
     methods: {
         title: "算法",
+        new: "新建算法",
     },
     tasks: {
         title: "任务",
