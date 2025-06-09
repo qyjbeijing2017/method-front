@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { methodDB, type NewMethod } from "../store/db";
 import { useEffect, useRef } from "react";
 import { AvatarEditorItem } from "../Components/AvatarEditorItem";
+import { FilesEditor } from "../Components/FilesEditor";
 
 export function MethodNew() {
   const { t } = useTranslation('methods');
@@ -33,25 +34,22 @@ export function MethodNew() {
     if (!newMethod) return;
     form.setFieldsValue(newMethod);
     methodRef.current = newMethod;
-    return () => {
-      methodDB.new_method.update(newMethod.id, {
-        ...methodRef.current,
-      });
-      console.log('Method updated:', methodRef.current);
-    }
   }, [form, newMethod]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const handleBeforeUnload = async () => {
       if (!methodRef.current) return;
       await methodDB.new_method.update(methodRef.current.id, {
         ...methodRef.current,
       });
-      console.log('Method saved before unload:', methodRef.current);
     }
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (!methodRef.current) return;
+      methodDB.new_method.update(methodRef.current.id, {
+        ...methodRef.current,
+      });
     }
   }, [])
 
@@ -102,10 +100,10 @@ export function MethodNew() {
           name="files"
           label={t('files')}
         >
-          {/* File input or file management component can be added here */}
+          <FilesEditor />
         </Form.Item>
 
-        <Form.Item<NewMethod>>
+        <Form.Item<NewMethod> wrapperCol={{ offset: 4 }}>
           <Button type="primary" htmlType="submit">
             {t('submit')}
           </Button>

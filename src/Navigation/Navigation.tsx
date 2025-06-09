@@ -21,6 +21,7 @@ export function Navigation({ collapsed }: { collapsed?: boolean }) {
         },
         {
             type: 'divider',
+            key: 'divider_my',
         },
         {
             key: 'tasks',
