@@ -44,6 +44,16 @@ export const zh_CN: ResourceLanguage = {
     methods: {
         title: "算法",
         new: "新建算法",
+        name: "算法名称",
+        icon: "图标",
+        icon_edit: "编辑图标",
+        icon_ok: "确定",
+        icon_cancel: "取消",
+        description: "描述",
+        files: "文件",
+        upload: "上传",
+        submit: "提交",
+        name_required: "算法名称不能为空",
     },
     tasks: {
         title: "任务",

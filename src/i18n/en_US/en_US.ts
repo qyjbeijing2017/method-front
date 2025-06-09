@@ -45,6 +45,16 @@ export const en_US: ResourceLanguage = {
     methods: {
         title: "Methods",
         new: "New Method",
+        name: "Method Name",
+        icon: "Icon",
+        icon_edit: "Edit Icon",
+        icon_ok: "OK",
+        icon_cancel: "Cancel",
+        description: "Description",
+        files: "Files",
+        upload: "Upload",
+        submit: "Submit",
+        name_required: "Method name cannot be empty",
     },
     tasks: {
         title: "Tasks",

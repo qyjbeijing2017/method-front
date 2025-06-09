@@ -1,9 +1,9 @@
-import { Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 import { useTranslation } from "react-i18next";
 import { useLiveQuery } from "dexie-react-hooks";
 import { methodDB, type NewMethod } from "../store/db";
-import { useEffect, useState } from "react";
-import AvatarEditor from 'react-avatar-editor';
+import { useEffect } from "react";
+import { AvatarEditorItem } from "../Components/AvatarEditorItem";
 
 export function MethodNew() {
   const { t } = useTranslation('methods');
@@ -33,7 +33,7 @@ export function MethodNew() {
       window.removeEventListener('beforeunload', handleUnload);
       handleUnload();
     }
-  }, [form]);
+  }, [form, newMethods]);
 
   return (
     <>
@@ -42,6 +42,9 @@ export function MethodNew() {
         form={form}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 16 }}
+        onFinish={async (values) => {
+          console.log('Form submitted:', values);
+        }}
       >
         <Form.Item
           name="name"
@@ -54,26 +57,9 @@ export function MethodNew() {
         <Form.Item
           name="icon"
           label={t('icon')}
-          valuePropName="file"
-          getValueFromEvent={(e) => {
-            if (Array.isArray(e)) {
-              return e[0];
-            }
-            return e && e.file;
-          }
-          }
         >
-          <AvatarEditor
-            image={newMethods?.icon as File || ''}
-            width={100}
-            height={100}
-            border={50}
-            onLoadFailure={(error) => console.error('Image load failed:', error)}
-            onImageReady={() => console.log('Image is ready')}
-            onImageChange={() => console.log('Image changed')}
-          />
+          <AvatarEditorItem title={t('icon_edit')} okText={t('icon_ok')} cancelText={t('icon_cancel')} uploadText={t('upload')} />
         </Form.Item>
-
 
         <Form.Item
           name="description"
@@ -90,6 +76,12 @@ export function MethodNew() {
           label={t('files')}
         >
           {/* File input or file management component can be added here */}
+        </Form.Item>
+
+        <Form.Item label={null}>
+          <Button type="primary" htmlType="submit">
+            {t('submit')}
+          </Button>
         </Form.Item>
       </Form>
     </>

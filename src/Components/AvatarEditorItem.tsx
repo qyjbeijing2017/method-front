@@ -1,7 +1,8 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Modal, Upload } from "antd";
+import { Modal, Slider, Upload } from "antd";
+import type { RcFile } from "antd/es/upload";
 import { useEffect, useRef, useState } from "react";
-import type AvatarEditor from "react-avatar-editor";
+import AvatarEditor from "react-avatar-editor";
 
 export function AvatarEditorItem({
     id,
@@ -10,6 +11,7 @@ export function AvatarEditorItem({
     title,
     okText,
     cancelText,
+    uploadText,
 }: {
     id?: string;
     value?: Blob;
@@ -17,10 +19,12 @@ export function AvatarEditorItem({
     title?: string;
     okText?: string;
     cancelText?: string;
+    uploadText?: string;
 }) {
-    const [imageUrl, setImageUrl] = useState<string | null>(value ? URL.createObjectURL(value) : null);
-    const [previewVisible, setPreviewVisible] = useState(false);
+    const imageUrl = value ? URL.createObjectURL(value) : null;
+    const [imageFile, setImageFile] = useState<RcFile | null>(null);
     const editorRef = useRef<AvatarEditor>(null);
+    const [scale, setScale] = useState(1);
 
     useEffect(() => {
         return () => {
@@ -30,13 +34,12 @@ export function AvatarEditorItem({
         }
     }, [imageUrl]);
 
-    return <>
-        < Upload
-            id={id}
+    return <span id={id}>
+        <Upload
             accept="image/*"
             showUploadList={false}
-            beforeUpload={async (file) => {
-
+            beforeUpload={async (file: RcFile) => {
+                setImageFile(file);
                 return false; // Prevent automatic upload
             }}
         >
@@ -45,18 +48,40 @@ export function AvatarEditorItem({
             ) : (
                 <div>
                     <PlusOutlined />
-                    <div style={{ marginTop: 8 }}>上传</div>
+                    <div style={{ marginTop: 8 }}>{uploadText}</div>
                 </div>
             )}
         </Upload >
         <Modal
             title={title}
-            open={previewVisible}
+            open={imageFile !== null}
             okText={okText}
             cancelText={cancelText}
-            onCancel={() => setPreviewVisible(false)}
+            onCancel={() => setImageFile(null)}
+            maskClosable={false}
+            centered
+            onOk={() => {
+                if (editorRef.current) {
+                    const canvas = editorRef.current.getImageScaledToCanvas();
+                    canvas.toBlob((blob) => {
+                        if (blob && onChange) {
+                            onChange(blob);
+                            setImageFile(null); // Close the modal after saving
+                        }
+                    }, 'image/png');
+                }
+            }}
         >
 
-        </Modal>
-    </>
+            <AvatarEditor
+                style={{ width: '100%', height: 400 }}
+                ref={editorRef}
+                image={imageFile || ''}
+                border={10}
+                rotate={0}
+                scale={scale}
+            />
+            <Slider value={scale} onChange={setScale} max={3} min={1} step={0.1} />
+        </Modal >
+    </span>
 }
