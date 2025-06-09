@@ -6,9 +6,9 @@ export const methodDB = new Dexie("MethodDB") as Dexie & {
 
 export interface NewMethod {
     id: number;
-    name?: string;
-    icon?: Blob;
-    description?: string;
+    name: string;
+    icon: Blob | null;
+    description: string;
     files: { id: number, name: string }[];
 }
 

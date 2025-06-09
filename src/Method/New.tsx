@@ -2,42 +2,58 @@ import { Button, Form, Input } from "antd";
 import { useTranslation } from "react-i18next";
 import { useLiveQuery } from "dexie-react-hooks";
 import { methodDB, type NewMethod } from "../store/db";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { AvatarEditorItem } from "../Components/AvatarEditorItem";
 
 export function MethodNew() {
   const { t } = useTranslation('methods');
-  const newMethods = useLiveQuery(async () => {
-    const methods = await methodDB.new_method.toArray();
-    return methods.length > 0 ? methods[0] : null;
-  }, [], []) as NewMethod | null;
-
+  const newMethod = useLiveQuery(async () => {
+    const newMetods = await methodDB.new_method.toArray()
+    if (newMetods.length === 0) {
+      const id = await methodDB.new_method.add({
+        name: '',
+        icon: null,
+        description: '',
+        files: [],
+      });
+      return {
+        id,
+        files: [],
+        name: '',
+        description: '',
+        icon: null,
+      } as NewMethod;
+    }
+    return newMetods[0]
+  });
   const [form] = Form.useForm<NewMethod>();
+  const methodRef = useRef<NewMethod | null>(null);
 
   useEffect(() => {
-
-    const handleUnload = async () => {
-      const values = form.getFieldsValue();
-      console.log('Form values before unload:', values);
-      if (newMethods) {
-        await methodDB.new_method.update(newMethods.id, {
-          ...newMethods,
-          ...values,
-        });
-      } else {
-        await methodDB.new_method.add(values);
-      }
-    }
-
-    form.setFieldsValue(newMethods || {});
-
-    window.addEventListener('beforeunload', handleUnload);
-
+    if (!newMethod) return;
+    form.setFieldsValue(newMethod);
+    methodRef.current = newMethod;
     return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-      handleUnload();
+      methodDB.new_method.update(newMethod.id, {
+        ...methodRef.current,
+      });
+      console.log('Method updated:', methodRef.current);
     }
-  }, [form, newMethods]);
+  }, [form, newMethod]);
+
+  useEffect(()=>{
+    const handleBeforeUnload = async () => {
+      if (!methodRef.current) return;
+      await methodDB.new_method.update(methodRef.current.id, {
+        ...methodRef.current,
+      });
+      console.log('Method saved before unload:', methodRef.current);
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+  }, [])
 
   return (
     <>
@@ -50,25 +66,29 @@ export function MethodNew() {
           console.log('Form submitted:', values);
         }}
         onChange={() => {
-          console.log('Form changed:', form.getFieldsValue());
+          methodRef.current = {
+            ...form.getFieldsValue(),
+            id: newMethod?.id || 1,
+          } as NewMethod;
         }}
       >
-        <Form.Item
-          name="name"
+        <Form.Item<NewMethod>
+          name={'name'}
           label={t('name')}
+          validateTrigger={['onBlur']}
           rules={[{ required: true, message: t('name_required') }]}
         >
           <Input placeholder={t('name_placeholder')} />
         </Form.Item>
 
-        <Form.Item
+        <Form.Item<NewMethod>
           name="icon"
           label={t('icon')}
         >
           <AvatarEditorItem title={t('icon_edit')} okText={t('icon_ok')} cancelText={t('icon_cancel')} uploadText={t('upload')} />
         </Form.Item>
 
-        <Form.Item
+        <Form.Item<NewMethod>
           name="description"
           label={t('description')}
         >
@@ -78,14 +98,14 @@ export function MethodNew() {
           />
         </Form.Item>
 
-        <Form.Item
+        <Form.Item<NewMethod>
           name="files"
           label={t('files')}
         >
           {/* File input or file management component can be added here */}
         </Form.Item>
 
-        <Form.Item label={null}>
+        <Form.Item<NewMethod>>
           <Button type="primary" htmlType="submit">
             {t('submit')}
           </Button>

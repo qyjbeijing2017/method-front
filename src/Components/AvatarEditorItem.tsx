@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Modal, Slider, Upload } from "antd";
+import { Flex, Modal, Slider, Upload } from "antd";
 import type { RcFile } from "antd/es/upload";
 import { useEffect, useRef, useState } from "react";
 import AvatarEditor from "react-avatar-editor";
@@ -35,23 +35,29 @@ export function AvatarEditorItem({
     }, [imageUrl]);
 
     return <span id={id}>
-        <Upload
-            accept="image/*"
-            showUploadList={false}
-            beforeUpload={async (file: RcFile) => {
-                setImageFile(file);
-                return false; // Prevent automatic upload
-            }}
-        >
-            {imageUrl ? (
-                <img src={imageUrl} alt="icon" style={{ width: '100%' }} />
-            ) : (
-                <div>
-                    <PlusOutlined />
-                    <div style={{ marginTop: 8 }}>{uploadText}</div>
-                </div>
-            )}
-        </Upload >
+        <Flex gap="middle" wrap>
+            <Upload
+                accept="image/*"
+                showUploadList={false}
+                listType="picture-card"
+                beforeUpload={async (file: RcFile) => {
+                    setImageFile(file);
+                    return false; // Prevent automatic upload
+                }}
+            >
+                {imageUrl ? (
+                    <img src={imageUrl} alt="icon" style={{ width: '100%' }} />
+                ) : (
+                    <button
+                        style={{ color: 'inherit', cursor: 'inherit', border: 0, background: 'none' }}
+                        type="button"
+                    >
+                        <PlusOutlined />
+                        <div style={{ marginTop: 8 }}>{uploadText}</div>
+                    </button>
+                )}
+            </Upload >
+        </Flex>
         <Modal
             title={title}
             open={imageFile !== null}
