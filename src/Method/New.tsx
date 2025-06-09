@@ -18,8 +18,12 @@ export function MethodNew() {
 
     const handleUnload = async () => {
       const values = form.getFieldsValue();
+      console.log('Form values before unload:', values);
       if (newMethods) {
-        await methodDB.new_method.put(values);
+        await methodDB.new_method.update(newMethods.id, {
+          ...newMethods,
+          ...values,
+        });
       } else {
         await methodDB.new_method.add(values);
       }
@@ -44,6 +48,9 @@ export function MethodNew() {
         wrapperCol={{ span: 16 }}
         onFinish={async (values) => {
           console.log('Form submitted:', values);
+        }}
+        onChange={() => {
+          console.log('Form changed:', form.getFieldsValue());
         }}
       >
         <Form.Item
