@@ -11,6 +11,8 @@ import { Settings } from './Pages/Settings.tsx';
 import { MethodAll } from './Method/All.tsx';
 import { MethodDetails } from './Method/Details.tsx';
 import { MethodNew } from './Method/New.tsx';
+import { LanguagePath } from './i18n/LanguagePath.tsx';
+import { AutoLanguage } from './i18n/AutoLanguage.tsx';
 
 
 const router = createBrowserRouter([
@@ -19,35 +21,46 @@ const router = createBrowserRouter([
     children: [
       {
         index: true, // This will render when the path is exactly '/'
-        element: <Home />,
+        element: <AutoLanguage />,
       },
       {
-        path: '/tasks',
-        element: <Tasks />,
-      },
-      {
-        path: '/methods',
-        element: <Methods />,
+        path: '/:language',
+        element: <LanguagePath />,
         children: [
           {
-            index: true, // This will render when the path is exactly '/methods'
-            element: <MethodAll />,
+            index: true, // This will render when the path is exactly '/'
+            element: <Home />,
           },
           {
-            path: '/methods/new',
-            element: <MethodNew />,
+            path: '/:language/tasks',
+            element: <Tasks />,
           },
           {
-            path: '/methods/:methodId',
-            element: <MethodDetails />,
-          },
+            path: '/:language/methods',
+            element: <Methods />,
+            children: [
+              {
+                index: true, // This will render when the path is exactly '/methods'
+                element: <MethodAll />,
+              },
+              {
+                path: '/:language/methods/new',
+                element: <MethodNew />,
+              },
+              {
+                path: '/:language/methods/:methodId',
+                element: <MethodDetails />,
+              },
 
+            ]
+          },
+          {
+            path: '/:language/settings',
+            element: <Settings />,
+          }
         ]
       },
-      {
-        path: '/settings',
-        element: <Settings />,
-      }
+
     ]
   },
 ])

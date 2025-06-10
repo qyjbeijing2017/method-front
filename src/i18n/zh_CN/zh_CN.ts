@@ -51,9 +51,19 @@ export const zh_CN: ResourceLanguage = {
         icon_cancel: "取消",
         description: "描述",
         files: "文件",
-        upload: "上传",
+        upload: "上传图标",
         submit: "提交",
         name_required: "算法名称不能为空",
+        name_placeholder: "请输入算法名称",
+        description_placeholder: "输入算法描述可以更好的帮助他人理解您的算法的功能、应用场景。",
+
+    }, 
+    file_editor: {
+        root: "根目录",
+        list_mode: "列表模式",
+        grid_mode: "网格模式",
+        add_folder: "新建文件夹",
+        upload: "上传",
     },
     tasks: {
         title: "任务",

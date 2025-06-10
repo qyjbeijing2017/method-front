@@ -4,7 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { methodDB, type NewMethod } from "../store/db";
 import { useEffect, useRef } from "react";
 import { AvatarEditorItem } from "../Components/AvatarEditorItem";
-import { FilesEditor } from "../Components/FilesEditor";
+import { FilesEditor } from "../Components/FileEditor/FilesEditor";
 
 export function MethodNew() {
   const { t } = useTranslation('methods');
@@ -32,7 +32,21 @@ export function MethodNew() {
 
   useEffect(() => {
     if (!newMethod) return;
-    form.setFieldsValue(newMethod);
+    form.setFieldsValue({
+      ...newMethod,
+      files: [
+        {
+          name: 'love',
+          isEmptyFolder: true,
+          lastModified: new Date(),
+        },
+        {
+          name: 'test',
+          isEmptyFolder: true,
+          lastModified: new Date(),
+        }
+      ],
+    });
     methodRef.current = newMethod;
   }, [form, newMethod]);
 

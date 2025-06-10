@@ -1,6 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { IFile } from '../Components/FilesEditor';
-
+import type { IFile } from '../Components/FileEditor/file.inter';
 export const methodDB = new Dexie("MethodDB") as Dexie & {
     new_method: EntityTable<NewMethod, 'id'>;
 }

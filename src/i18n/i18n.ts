@@ -18,6 +18,7 @@ i18n.use(initReactI18next).init({
     'methods',
     'tasks',
     'settings',
+    'file_editor',
   ], // 命名空间
   defaultNS: 'translation', // 默认命名空间
   interpolation: {

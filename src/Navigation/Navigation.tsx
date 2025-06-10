@@ -3,7 +3,7 @@ import Sider from "antd/es/layout/Sider";
 import { useTranslation } from "react-i18next";
 import { CalculatorOutlined, CodeOutlined, HomeOutlined, SettingOutlined } from "@ant-design/icons";
 import type { MenuProps } from 'antd';
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation, useParams } from "react-router";
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -11,13 +11,15 @@ type MenuItem = Required<MenuProps>['items'][number];
 export function Navigation({ collapsed }: { collapsed?: boolean }) {
     const { t } = useTranslation('navigation');
     const location = useLocation();
-    const currentPath = location.pathname.split('/')[1] || 'home'; // Get the first segment of the path
+    const currentPath = location.pathname.split('/')[1] || 'home'; // Get the first segment of the path 
+    const param = useParams<{ language?: string }>();
+    const language = param.language || 'en_US'; // Default to 'en_US' if no language is provided
 
     const items: MenuItem[] = [
         {
             key: 'home',
             icon: <HomeOutlined />,
-            label: <NavLink  to={'/'}>{t('home')}</NavLink>,
+            label: <NavLink  to={`/${language}`}>{t('home')}</NavLink>,
         },
         {
             type: 'divider',
@@ -26,17 +28,17 @@ export function Navigation({ collapsed }: { collapsed?: boolean }) {
         {
             key: 'tasks',
             icon: <CodeOutlined />,
-            label: <NavLink to={'/tasks'}>{t('tasks')}</NavLink>,
+            label: <NavLink to={`/${language}/tasks`}>{t('tasks')}</NavLink>,
         },
         {
             key: 'methods',
             icon: <CalculatorOutlined/>,
-            label: <NavLink to={'/methods'}>{t('methods')}</NavLink>,
+            label: <NavLink to={`/${language}/methods`}>{t('methods')}</NavLink>,
         },
         {
             key: 'settings',
             icon: <SettingOutlined />,
-            label: <NavLink to={'/settings'}>{t('settings')}</NavLink>,
+            label: <NavLink to={`/${language}/settings`}>{t('settings')}</NavLink>,
         }
     ];
 
