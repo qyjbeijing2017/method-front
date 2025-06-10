@@ -36,13 +36,12 @@ export function MethodNew() {
       ...newMethod,
       files: [
         {
-          name: 'love',
-          isEmptyFolder: true,
+          name: '123',
           lastModified: new Date(),
         },
         {
-          name: 'test',
-          isEmptyFolder: true,
+          name: '456.txt',
+          data: new Blob(['Hello World'], { type: 'text/plain' }),
           lastModified: new Date(),
         }
       ],

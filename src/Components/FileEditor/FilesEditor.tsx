@@ -1,7 +1,7 @@
 import { AppstoreAddOutlined, BarsOutlined, FolderAddOutlined, HomeOutlined, UploadOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Col, List, Row, Segmented, theme } from "antd";
 import { useMemo, useState } from "react";
-import { lookup } from 'mime-types';
+import mime from 'mime';
 import { useTranslation } from "react-i18next";
 import { FilesEditorToolTip } from "./FileEditorToolTip";
 import type { FileEditorMode, IFile, IFileShow } from "./file.inter";
@@ -53,7 +53,7 @@ export function FilesEditor({
                     }
                     dir.size += file.data?.size ?? 0;
                 } else {
-                    const fileType = lookup(file.name) || 'application/octet-stream';
+                    const fileType = mime.getType(file.name) || 'application/octet-stream';
                     files.push({
                         name: relativePath,
                         type: fileType,
@@ -157,20 +157,15 @@ export function FilesEditor({
             grid={viewMode === 'List' ? undefined : {
                 gutter: 16,
             }}
-            renderItem={(file, index) => (
-                <List.Item>
-                    {file.type === 'directory' ?
-                        <FolderItem
-                            file={file}
-                            mode={viewMode}
-                        /> :
-                        <FileItem
-                            file={file}
-                            mode={viewMode}
-                        />
-                    }
-                </List.Item>
-            )}
+            renderItem={(file, index) => (file.type === 'directory' ?
+                <FolderItem
+                    file={file}
+                    mode={viewMode}
+                /> :
+                <FileItem
+                    file={file}
+                    mode={viewMode}
+                />)}
         />
     </Row>
 }
