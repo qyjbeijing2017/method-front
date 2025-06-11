@@ -1,17 +1,16 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { IFile } from '../Components/FileEditor/file.inter';
 export const methodDB = new Dexie("MethodDB") as Dexie & {
-    new_method: EntityTable<NewMethod, 'id'>;
+    new_method: EntityTable<NewMethod, 'username'>;
 }
 
 export interface NewMethod {
-    id: number;
-    name: string;
-    icon: Blob | null;
-    description: string;
-    files: IFile[];
+    username: string;
+    name?: string;
+    icon?: Blob;
+    description?: string;
+    files?: File;
 }
 
 methodDB.version(1).stores({
-    new_method: "++id",
+    new_method: "++username",
 });

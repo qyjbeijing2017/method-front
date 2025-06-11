@@ -5,64 +5,39 @@ import { methodDB, type NewMethod } from "../store/db";
 import { useEffect, useRef } from "react";
 import { AvatarEditorItem } from "../Components/AvatarEditorItem";
 import { FilesEditor } from "../Components/FileEditor/FilesEditor";
+import { useAccount } from "../store/account";
 
 export function MethodNew() {
   const { t } = useTranslation('methods');
+  const { username } = useAccount();
   const newMethod = useLiveQuery(async () => {
-    const newMetods = await methodDB.new_method.toArray()
-    if (newMetods.length === 0) {
-      const id = await methodDB.new_method.add({
-        name: '',
-        icon: null,
-        description: '',
-        files: [],
-      });
-      return {
-        id,
-        files: [],
-        name: '',
-        description: '',
-        icon: null,
-      } as NewMethod;
-    }
+    const newMetods = await methodDB.new_method.where('username').equals(username).toArray();
     return newMetods[0]
-  });
+  }, [username]);
   const [form] = Form.useForm<NewMethod>();
   const methodRef = useRef<NewMethod | null>(null);
 
   useEffect(() => {
-    if (!newMethod) return;
-    form.setFieldsValue({
-      ...newMethod,
-      files: [
-        {
-          name: '123',
-          lastModified: new Date(),
-        },
-        {
-          name: '456.txt',
-          data: new Blob(['Hello World'], { type: 'text/plain' }),
-          lastModified: new Date(),
-        }
-      ],
-    });
+    if (!newMethod) {
+      methodDB.new_method.add({
+        username
+      })
+      return;
+    };
+    form.setFieldsValue(newMethod);
     methodRef.current = newMethod;
   }, [form, newMethod]);
 
   useEffect(() => {
     const handleBeforeUnload = async () => {
       if (!methodRef.current) return;
-      await methodDB.new_method.update(methodRef.current.id, {
-        ...methodRef.current,
-      });
+      await methodDB.new_method.update(methodRef.current.username, methodRef.current);
     }
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       if (!methodRef.current) return;
-      methodDB.new_method.update(methodRef.current.id, {
-        ...methodRef.current,
-      });
+      methodDB.new_method.update(methodRef.current.username, methodRef.current);
     }
   }, [])
 
@@ -76,11 +51,11 @@ export function MethodNew() {
         onFinish={async (values) => {
           console.log('Form submitted:', values);
         }}
-        onChange={() => {
+        onChange={(values) => {
           methodRef.current = {
+            ...methodRef.current,
             ...form.getFieldsValue(),
-            id: newMethod?.id || 1,
-          } as NewMethod;
+          }
         }}
       >
         <Form.Item<NewMethod>
