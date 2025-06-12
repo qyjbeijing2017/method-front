@@ -84,6 +84,8 @@ export function AvatarEditorItem({
                 image={imageFile || ''}
                 border={10}
                 rotate={0}
+                width={256}
+                height={256}
                 scale={scale}
             />
             <Slider value={scale} onChange={setScale} max={3} min={1} step={0.1} />

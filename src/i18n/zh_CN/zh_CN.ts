@@ -58,6 +58,7 @@ export const zh_CN: ResourceLanguage = {
         description_placeholder: "输入算法描述可以更好的帮助他人理解您的算法的功能、应用场景。",
         files_required: "您必须为您的算法提供一个可执行文件或Dockerfile。",
         executable_required: "您必须为您运行在Ubuntu容器上的算法选择一个可执行文件。",
+        executable: "可执行文件",
     }, 
     file_editor: {
         root: "根目录",

@@ -59,6 +59,7 @@ export const en_US: ResourceLanguage = {
         description_placeholder: "Entering a description can help others understand the functionality and application scenarios of your method.",
         files_required: "Files cannot be empty",
         executable_required: "Executable file cannot be empty for normal Ubuntu Container",
+        executable: "Executable File",
     },
     file_editor: {
         root: "Root",
