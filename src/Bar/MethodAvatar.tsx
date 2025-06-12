@@ -9,7 +9,6 @@ import { useMemo } from "react";
 export default function MethodAvatar() {
     const { username } = useAccount();
     const { t } = useTranslation('sign_in');
-    console.log('MethodAvatar rendered', username);
 
     const items: MenuProps['items'] = useMemo(() => (username ? [
         {

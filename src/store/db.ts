@@ -9,6 +9,7 @@ export interface NewMethod {
     icon?: Blob;
     description?: string;
     files?: File;
+    executable?: string;
 }
 
 methodDB.version(1).stores({

@@ -17,6 +17,7 @@
     "dexie-react-hooks": "^1.1.7",
     "fflate": "^0.8.2",
     "i18next": "^25.2.1",
+    "jszip": "^3.10.1",
     "jwt-decode": "^4.0.0",
     "mime": "^4.0.7",
     "react": "^19.1.0",

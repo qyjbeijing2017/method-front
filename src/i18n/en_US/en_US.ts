@@ -57,6 +57,8 @@ export const en_US: ResourceLanguage = {
         name_required: "Method name cannot be empty",
         name_placeholder: "Please enter method name",
         description_placeholder: "Entering a description can help others understand the functionality and application scenarios of your method.",
+        files_required: "Files cannot be empty",
+        executable_required: "Executable file cannot be empty for normal Ubuntu Container",
     },
     file_editor: {
         root: "Root",
@@ -64,6 +66,10 @@ export const en_US: ResourceLanguage = {
         grid_mode: "Grid Mode",
         add_folder: "Add Folder",
         upload: "Upload",
+    },
+    zip_file_uploader: {
+        upload_text: "Start From A Zip File",
+        upload_hint: "You can upload a zip file containing your whole progress, including a executable file for normal Ubuntu Container, or a Dockerfile for Custom Container.",
     },
     tasks: {
         title: "Tasks",

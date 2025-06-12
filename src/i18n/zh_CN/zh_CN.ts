@@ -56,7 +56,8 @@ export const zh_CN: ResourceLanguage = {
         name_required: "算法名称不能为空",
         name_placeholder: "请输入算法名称",
         description_placeholder: "输入算法描述可以更好的帮助他人理解您的算法的功能、应用场景。",
-
+        files_required: "您必须为您的算法提供一个可执行文件或Dockerfile。",
+        executable_required: "您必须为您运行在Ubuntu容器上的算法选择一个可执行文件。",
     }, 
     file_editor: {
         root: "根目录",
@@ -64,6 +65,10 @@ export const zh_CN: ResourceLanguage = {
         grid_mode: "网格模式",
         add_folder: "新建文件夹",
         upload: "上传",
+    },
+    zip_file_uploader: {
+        upload_text: "从一个ZIP文件开始",
+        upload_hint: "上传一个zip文件，包含一个可以运行在Ubuntu系统上的可执行程序，或者一个Dockerfile用于自定义容器。",
     },
     tasks: {
         title: "任务",
