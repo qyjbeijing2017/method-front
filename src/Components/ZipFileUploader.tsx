@@ -8,11 +8,13 @@ export function ZipFileUploader({
     value,
     onChange,
     loading,
+    disabled,
 }: {
     id?: string;
     value?: File;
     onChange?: (value: File) => void;
     loading?: boolean;
+    disabled?: boolean;
 }) {
     const { t } = useTranslation('zip_file_uploader');
     return <Upload.Dragger
@@ -23,7 +25,6 @@ export function ZipFileUploader({
             onChange?.(file);
             return false;
         }}
-        disabled={loading}
     >
         <p className="ant-upload-drag-icon">
             {loading ? <LoadingOutlined /> : value ? <FileZipOutlined /> : <InboxOutlined />}

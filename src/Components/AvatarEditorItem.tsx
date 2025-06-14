@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { Modal, Slider, Upload } from "antd";
 import type { RcFile } from "antd/es/upload";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +12,7 @@ export function AvatarEditorItem({
     okText,
     cancelText,
     uploadText,
+    disabled,
 }: {
     id?: string;
     value?: Blob;
@@ -20,6 +21,7 @@ export function AvatarEditorItem({
     okText?: string;
     cancelText?: string;
     uploadText?: string;
+    disabled?: boolean;
 }) {
     const imageUrl = value ? URL.createObjectURL(value) : null;
     const [imageFile, setImageFile] = useState<RcFile | null>(null);

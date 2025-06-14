@@ -4,6 +4,7 @@ import { Layout } from "antd";
 import MethodBar from "./Bar/MethodBar";
 import { SignIn } from "./SignIn/SignIn";
 import { Navigation } from "./Navigation/Navigation";
+import { UploadTask } from "./UploadTask/UploadTask";
 
 export function MethodLayout(): ReactNode {
     const [collapsed, setCollapsed] = useState(false);
@@ -18,5 +19,6 @@ export function MethodLayout(): ReactNode {
             </Layout>
         </Layout>
         <SignIn />
+        <UploadTask />
     </>;
 }

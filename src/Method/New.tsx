@@ -13,7 +13,7 @@ export function MethodNew() {
   const { t } = useTranslation('methods');
   const { username } = useAccount();
   const newMethod = useLiveQuery(async () => {
-    const newMetods = await methodDB.new_method.where('username').equals(username).toArray();
+    const newMetods = await methodDB.new_methods.where('username').equals(username).toArray();
     return newMetods[0]
   }, [username]);
   const [form] = Form.useForm<NewMethod>();
@@ -34,16 +34,16 @@ export function MethodNew() {
   }, []);
 
   useEffect(() => {
-    if(!filePath.length) return;
+    if (!filePath.length) return;
     const exec = form.getFieldValue('executable');
-    if(!filePath.includes(exec)) {
+    if (!filePath.includes(exec)) {
       form.setFieldValue('executable', undefined);
     }
   }, [filePath, form]);
 
   useEffect(() => {
     if (!newMethod) {
-      methodDB.new_method.add({
+      methodDB.new_methods.add({
         username
       })
       return;
@@ -58,13 +58,13 @@ export function MethodNew() {
   useEffect(() => {
     const handleBeforeUnload = async () => {
       if (!methodRef.current) return;
-      await methodDB.new_method.update(username, methodRef.current);
+      await methodDB.new_methods.update(username, methodRef.current);
     }
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       if (!methodRef.current) return;
-      methodDB.new_method.update(username, methodRef.current);
+      methodDB.new_methods.update(username, methodRef.current);
     }
   }, [username])
 
@@ -76,7 +76,13 @@ export function MethodNew() {
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 16 }}
         onFinish={async (values) => {
-          console.log('Form submitted:', values);
+          setLoading(true);
+          await new Promise<void>(async (resolve) => {
+            setTimeout(() => {
+              resolve();
+            }, 3000); 
+          });
+          setLoading(false);
         }}
         onValuesChange={(_, val) => {
           if (methodRef.current?.files !== val.files) {
@@ -95,14 +101,14 @@ export function MethodNew() {
           validateTrigger={['onBlur']}
           rules={[{ required: true, message: t('name_required') }]}
         >
-          <Input placeholder={t('name_placeholder')} />
+          <Input placeholder={t('name_placeholder')} disabled={loading} />
         </Form.Item>
 
         <Form.Item<NewMethod>
           name="icon"
           label={t('icon')}
         >
-          <AvatarEditorItem title={t('icon_edit')} okText={t('icon_ok')} cancelText={t('icon_cancel')} uploadText={t('upload')} />
+          <AvatarEditorItem title={t('icon_edit')} okText={t('icon_ok')} cancelText={t('icon_cancel')} uploadText={t('upload')} disabled={loading} />
         </Form.Item>
 
         <Form.Item<NewMethod>
@@ -112,6 +118,7 @@ export function MethodNew() {
           <Input.TextArea
             placeholder={t('description_placeholder')}
             rows={4}
+            disabled={loading}
           />
         </Form.Item>
 
@@ -120,7 +127,7 @@ export function MethodNew() {
           label={t('files')}
           rules={[{ required: true, message: t('files_required') }]}
         >
-          <ZipFileUploader loading={fileLoading} />
+          <ZipFileUploader loading={fileLoading} disabled={loading} />
         </Form.Item>
 
         {filePath.length > 0 && !filePath.includes('Dockerfile') ? <Form.Item<NewMethod>
@@ -131,11 +138,11 @@ export function MethodNew() {
           <Select options={filePath.map(file => ({
             label: file,
             value: file,
-          }))} disabled={fileLoading} />
+          }))} disabled={fileLoading || loading} />
         </Form.Item> : <></>}
 
         <Form.Item<NewMethod> wrapperCol={{ offset: 4 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" disabled={fileLoading} loading={loading}>
             {t('submit')}
           </Button>
         </Form.Item>
