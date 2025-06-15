@@ -13,6 +13,7 @@ export function AvatarEditorItem({
     cancelText,
     uploadText,
     disabled,
+    loading
 }: {
     id?: string;
     value?: Blob;
@@ -22,6 +23,7 @@ export function AvatarEditorItem({
     cancelText?: string;
     uploadText?: string;
     disabled?: boolean;
+    loading?: boolean;
 }) {
     const imageUrl = value ? URL.createObjectURL(value) : null;
     const [imageFile, setImageFile] = useState<RcFile | null>(null);
@@ -38,6 +40,7 @@ export function AvatarEditorItem({
 
     return <>
         <Upload
+            disabled={disabled || loading}
             id={id}
             accept="image/*"
             showUploadList={false}
@@ -47,7 +50,7 @@ export function AvatarEditorItem({
                 return false; // Prevent automatic upload
             }}
         >
-            {imageUrl ? (
+            {loading ? <LoadingOutlined /> : imageUrl ? (
                 <img src={imageUrl} alt="icon" style={{ width: '100%' }} />
             ) : (
                 <button

@@ -1,6 +1,5 @@
 import { Button, Form, Input, Select } from "antd";
 import { useTranslation } from "react-i18next";
-import { useLiveQuery } from "dexie-react-hooks";
 import { methodDB, type NewMethod } from "../store/db";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AvatarEditorItem } from "../Components/AvatarEditorItem";
@@ -8,23 +7,24 @@ import { useAccount } from "../store/account";
 import { ZipFileUploader } from "../Components/ZipFileUploader";
 import { loadAsync, } from 'jszip';
 import { errorReport } from "../utils/errorReport";
+import { httpRequest } from "../network/http-request";
+import { createMethodService } from "../network/create-method";
 
 export function MethodNew() {
   const { t } = useTranslation('methods');
   const { username } = useAccount();
-  const newMethod = useLiveQuery(async () => {
-    const newMetods = await methodDB.new_methods.where('username').equals(username).toArray();
-    return newMetods[0]
-  }, [username]);
   const [form] = Form.useForm<NewMethod>();
-  const methodRef = useRef<NewMethod | null>(null);
   const [filePath, setFilePath] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [fileLoading, setFileLoading] = useState(false);
+  const [iconLoading, setIconLoading] = useState(false);
 
   const fileParse = useCallback(async (file: File) => {
     setFileLoading(true);
     errorReport(async () => {
+      await methodDB.new_methods.update(username, {
+        files: file,
+      });
       const zip = await loadAsync(file);
       const files = Object.keys(zip.files).filter((key) => zip.files[key].dir === false)
       setFilePath(files);
@@ -33,40 +33,41 @@ export function MethodNew() {
     })
   }, []);
 
+  const iconSave = useCallback(async (file: Blob) => {
+    setIconLoading(true);
+    errorReport(async () => {
+      await methodDB.new_methods.update(username, {
+        icon: file,
+      });
+    }).finally(() => {
+      setIconLoading(false);
+    });
+  }, []);
+
   useEffect(() => {
     if (!filePath.length) return;
     const exec = form.getFieldValue('executable');
     if (!filePath.includes(exec)) {
-      form.setFieldValue('executable', undefined);
+      form.setFieldValue('executable', filePath[0]);
     }
   }, [filePath, form]);
 
   useEffect(() => {
-    if (!newMethod) {
-      methodDB.new_methods.add({
-        username
-      })
-      return;
-    };
-    form.setFieldsValue(newMethod);
-    if (newMethod.files) {
-      fileParse(newMethod.files);
-    }
-    methodRef.current = newMethod;
-  }, [form, newMethod]);
+    if (!username) return;
 
-  useEffect(() => {
-    const handleBeforeUnload = async () => {
-      if (!methodRef.current) return;
-      await methodDB.new_methods.update(username, methodRef.current);
-    }
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      if (!methodRef.current) return;
-      methodDB.new_methods.update(username, methodRef.current);
-    }
-  }, [username])
+    methodDB.new_methods.get(username).then(async (newMethod) => {
+      if (!newMethod) {
+        await methodDB.new_methods.add({
+          username
+        });
+        return;
+      }
+      form.setFieldsValue(newMethod);
+      if (newMethod.files) {
+        fileParse(newMethod.files);
+      }
+    });
+  }, [form, username]);
 
   return (
     <>
@@ -77,22 +78,31 @@ export function MethodNew() {
         wrapperCol={{ span: 16 }}
         onFinish={async (values) => {
           setLoading(true);
-          await new Promise<void>(async (resolve) => {
-            setTimeout(() => {
-              resolve();
-            }, 3000); 
-          });
+          await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate network delay
+          // errorReport(async () => {
+          //   await methodDB.upload_tasks.add({
+          //     username,
+          //     type: 'method',
+          //     date: new Date(),
+          //     status: 'pending',
+          //     data: values,
+          //   })
+          //   await httpRequest(createMethodService(values as { name: string }))
+          // })
           setLoading(false);
         }}
-        onValuesChange={(_, val) => {
-          if (methodRef.current?.files !== val.files) {
-            if (val.files)
-              fileParse(val.files);
-            else {
-              setFilePath([]);
-            }
+        onValuesChange={(changedValue: Partial<NewMethod>) => {
+          if (changedValue.files) {
+            fileParse(changedValue.files as File);
           }
-          methodRef.current = val;
+          if (changedValue.icon) {
+            iconSave(changedValue.icon as Blob);
+          }
+          const { files, icon, ...rest } = changedValue;
+
+          methodDB.new_methods.update(username, {
+            ...rest
+          })
         }}
       >
         <Form.Item<NewMethod>
@@ -105,10 +115,25 @@ export function MethodNew() {
         </Form.Item>
 
         <Form.Item<NewMethod>
+          name="version"
+          label={t('version')}
+          rules={[{ required: true, message: t('version_required') }]}
+        >
+          <Input placeholder={t('version_placeholder')} disabled={loading} />
+        </Form.Item>
+
+        <Form.Item<NewMethod>
           name="icon"
           label={t('icon')}
         >
-          <AvatarEditorItem title={t('icon_edit')} okText={t('icon_ok')} cancelText={t('icon_cancel')} uploadText={t('upload')} disabled={loading} />
+          <AvatarEditorItem
+            title={t('icon_edit')}
+            okText={t('icon_ok')}
+            cancelText={t('icon_cancel')}
+            uploadText={t('upload')}
+            disabled={loading}
+            loading={iconLoading}
+          />
         </Form.Item>
 
         <Form.Item<NewMethod>

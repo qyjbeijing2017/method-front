@@ -60,6 +60,9 @@ export const en_US: ResourceLanguage = {
         files_required: "Files cannot be empty",
         executable_required: "Executable file cannot be empty for normal Ubuntu Container",
         executable: "Executable File",
+        version: "Version",
+        version_required: "Version cannot be empty",
+        version_placeholder: "Please enter version",
     },
     file_editor: {
         root: "Root",

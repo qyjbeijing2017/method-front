@@ -59,6 +59,9 @@ export const zh_CN: ResourceLanguage = {
         files_required: "您必须为您的算法提供一个可执行文件或Dockerfile。",
         executable_required: "您必须为您运行在Ubuntu容器上的算法选择一个可执行文件。",
         executable: "可执行文件",
+        version: "版本",
+        version_required: "版本不能为空",
+        version_placeholder: "请输入版本号",
     }, 
     file_editor: {
         root: "根目录",
