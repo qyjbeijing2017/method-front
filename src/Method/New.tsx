@@ -79,16 +79,16 @@ export function MethodNew() {
         onFinish={async (values) => {
           setLoading(true);
           await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate network delay
-          // errorReport(async () => {
-          //   await methodDB.upload_tasks.add({
-          //     username,
-          //     type: 'method',
-          //     date: new Date(),
-          //     status: 'pending',
-          //     data: values,
-          //   })
-          //   await httpRequest(createMethodService(values as { name: string }))
-          // })
+          errorReport(async () => {
+            await httpRequest(createMethodService(values as { name: string }))
+            await methodDB.upload_tasks.add({
+              username,
+              type: 'method',
+              date: new Date(),
+              status: 'pending',
+              data: values,
+            })
+          })
           setLoading(false);
         }}
         onValuesChange={(changedValue: Partial<NewMethod>) => {
